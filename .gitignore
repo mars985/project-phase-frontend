@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+research_paper.pdf
+Reviewfinal.docx
+stable_diffusion/sd-env/
+stable_diffusion/data
+stable_diffusion/sd/__pycache__
+
