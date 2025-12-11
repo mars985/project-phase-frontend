@@ -54,7 +54,14 @@ async function newPrompt(req, res) {
 
     res.json({
       message: "Saved successfully",
-      prompt: savedPrompt,
+      prompt: {
+        prompt: savedPrompt.prompt,
+        id: savedPrompt._id,
+        image: {
+          data: savedPrompt.image.data.toString("base64"),
+          contentType: "image/png",
+        },
+      },
     });
   } catch (err) {
     console.error("Error:", err);

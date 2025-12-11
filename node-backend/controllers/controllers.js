@@ -4,7 +4,7 @@ const {
   getConversations,
   getConversationById,
   createPromptAndAddToConversation,
-  createConversations
+  createConversations,
 } = require("../services/services");
 
 // ===============================
@@ -34,6 +34,35 @@ exports.addPrompt = async (req, res) => {
       conversationId: conversationid,
       prompt,
     });
+
+    // Ensure image buffer is serialized as base64 for the frontend
+    try {
+      if (
+        result &&
+        result.prompt &&
+        result.prompt.image &&
+        result.prompt.image.data
+      ) {
+        const imgData = result.prompt.image.data;
+        // Mongoose/Buffer may serialize as Buffer or { type: 'Buffer', data: [...] }
+        let base64 = null;
+
+        if (Buffer.isBuffer(imgData)) {
+          base64 = imgData.toString("base64");
+        } else if (imgData.data && Array.isArray(imgData.data)) {
+          base64 = Buffer.from(imgData.data).toString("base64");
+        } else if (typeof imgData === "string") {
+          // already a base64 string
+          base64 = imgData;
+        }
+
+        if (base64) {
+          result.prompt.image.data = base64;
+        }
+      }
+    } catch (err) {
+      console.error("Error serializing image data:", err);
+    }
 
     res.json(result);
   } catch (err) {
